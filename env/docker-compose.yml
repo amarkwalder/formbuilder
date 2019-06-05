@@ -1,0 +1,88 @@
+version: '3.7'
+
+services:
+
+  mongo:
+    image: mongo:4.1
+    restart: always
+    volumes:
+      - mdb-data:/data/db
+    networks:
+      main:
+        aliases:
+          - host-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME:
+      MONGO_INITDB_ROOT_PASSWORD:
+
+  formio:
+    build: ../formio/
+    restart: always
+    depends_on:
+      - mongo
+    networks:
+      main:
+        aliases:
+          - host-formio
+    environment:
+      DEBUG: formio:*
+      NODE_CONFIG: '{"mongo": "mongodb://host-mongo:27017/formio"}'
+      ROOT_EMAIL: admin@example.com
+      ROOT_PASSWORD: CHANGEME
+    stdin_open: true
+    tty: true
+
+  formcockpit:
+    build: ../formcockpit/
+    depends_on:
+      - formio
+    networks:
+      main:
+        aliases:
+          - host-formcockpit
+
+  formviewer:
+    build: ../formviewer/
+    depends_on:
+      - formio
+    networks:
+      main:
+        aliases:
+          - host-formviewer
+
+  workbench:
+    build: ../workbench/
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+    networks:
+      main:
+        aliases:
+          - host-workbench
+    environment:
+      DEBUG: workbench:*
+      PORT: 4000
+      BASIC_AUTH_USER: test
+      BASIC_AUTH_PWD: password123
+      DATABASE_URL: mongodb://host-mongo:27017/workbench
+      FORM_API_URL: http://proxy/formio/form/
+
+  proxy: 
+    build: ../proxy
+    ports:
+      - 80:80
+    links:
+      - formio
+      - formcockpit
+      - formviewer
+    networks:
+      main:
+        aliases:
+          - host-proxy
+
+volumes:
+  mdb-data:
+
+networks:
+  main:
