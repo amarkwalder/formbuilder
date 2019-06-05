@@ -7,6 +7,8 @@ services:
     restart: always
     volumes:
       - mdb-data:/data/db
+    ports:
+      - 27017:27017
     networks:
       main:
         aliases:
