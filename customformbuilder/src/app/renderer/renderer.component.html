@@ -1,0 +1,35 @@
+<formio [form]='{
+  "title": "My Test Form",
+  components: [
+  {
+    "type": "textfield",
+    "key": "firstName",
+    "label": "First Name",
+    "placeholder": "Enter your first name.",
+    "input": true,
+    "validate": {
+      "required": true
+    }
+  },
+  {
+    "type": "textfield",
+    "key": "lastName",
+    "label": "Last Name",
+    "placeholder": "Enter your last name",
+    "input": true,
+    "validate": {
+      "required": true
+    }
+  },
+  {
+    "type": "button",
+    "action": "submit",
+    "label": "Submit",
+    "theme": "primary"
+  }
+]
+}'></formio>
+
+<!--
+<formio src="https://examples.form.io/example"></formio>
+-->

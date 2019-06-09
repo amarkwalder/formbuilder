@@ -20,62 +20,24 @@ router.use((req, res, next) => {
   next();
 });
 
-router.put('/', async (req, res) => {
-  try {
-
-//    console.log('PUT: ' + req.originalUrl);
-//    console.log(req.body);
-
-    var data = req.body;
-    var metadata = await getMetadata(data.submission.form);
-
-    await FormDataSchema.findByIdAndUpdate(
-      data.submission._id, 
-      new FormDataSchema({
-        _id: data.submission._id,
-        form: data.submission.form,
-        title: metadata.title,
-        created: data.submission.created,
-        modified: data.submission.modified,
-        data: JSON.stringify(data),
-        metadata: JSON.stringify(metadata),
-      }),
-      { upsert: true, useFindAndModify: false }
-    ).then((formdata)=>{
-      res.status(200).send();
-    }).catch((error)=>{
-      console.error(error);
-      res.status(500).send(error);
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error);
-  }
-
-});
-
 router.post('/', async (req, res) => {
   try {
 
 //    console.log('POST: ' + req.originalUrl);
 //    console.log(req.body);
-    
-    var data = req.body;
-    var metadata = await getMetadata(data.submission.form);
 
-    await FormDataSchema.findByIdAndUpdate(
-      data.submission._id, 
+    var formId = req.body.request.form;
+    var data = req.body.request.data;
+    var metadata = await getMetadata(formId);
+
+    await FormDataSchema.create(
       new FormDataSchema({
-        _id: data.submission._id,
-        form: data.submission.form,
+        form: formId,
         title: metadata.title,
-        created: data.submission.created,
-        modified: data.submission.modified,
+        timestamp: Date.now(),
         data: JSON.stringify(data),
         metadata: JSON.stringify(metadata),
-      }),
-      { upsert: true, useFindAndModify: false }
+      })
     ).then((formdata)=>{
       res.status(200).send();
     }).catch((error)=>{
@@ -83,29 +45,6 @@ router.post('/', async (req, res) => {
       res.status(500).send(error);
     });
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error);
-  }
-
-});
-
-router.delete('/', async (req, res) => {
-  try {
-
-//    console.log('DELETE: ' + req.originalUrl);
-//    console.log(req.body);
-    
-    var submissionId = req.query.submissionId;
-    await FormDataSchema.deleteOne(
-      { _id: submissionId }
-    ).then((formdata)=>{
-      res.status(200).send();
-    }).catch((error)=>{
-      console.error(error);
-      res.status(500).send(error);
-    });
-  
   } catch (error) {
     console.error(error);
     res.status(500).send(error);
@@ -117,7 +56,7 @@ async function getMetadata(formId) {
   var formApiUrl = process.env.FORM_API_URL + formId;
   
   return new Promise((resolve, reject) => {
-  
+    console.log(formApiUrl);
     http.get(formApiUrl, (resp) => {
       let metadata = '';
     

@@ -6,17 +6,15 @@ block content
 
   table(style='width:100%; border-spacing:10px;', border='0')
     tr
-      th(style='text-align:left;') Formular
-      th(style='text-align:left') Erzeugt
-      th(style='text-align:left') Bearbeitet
+      th(style='text-align:left;') Timestamp
+      th(style='text-align:left') Titel
       th(style='text-align:center') Formulardaten
       th(style='text-align:center') Metadaten
 
     each form in form_list
       tr
+        td #{form.timestamp} 
         td #{form.title} 
-        td #{form.created} 
-        td #{form.modified}
         td 
           div(style='text-align:center;') 
             a(href='/form/data/' + form._id, target='_blank') Link

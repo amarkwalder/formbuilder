@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
 
         await FormDataSchema.find(
         ).sort(
-          { modified: -1 }
+          { timestamp: -1 }
         ).then((formList)=>{
           res.render('index', { form_list: formList });
         }).catch((err)=>{
