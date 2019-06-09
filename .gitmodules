@@ -1,3 +1,6 @@
 [submodule "formio"]
 	path = formio
 	url = https://github.com/formio/formio.git
+[submodule "env/formio/client"]
+	path = env/formio/client
+	url = https://github.com/formio/formio-app-formio.git

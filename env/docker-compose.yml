@@ -4,7 +4,6 @@ services:
 
   mongo:
     image: mongo:4.1
-    restart: always
     volumes:
       - mdb-data:/data/db
     ports:
@@ -18,8 +17,10 @@ services:
       MONGO_INITDB_ROOT_PASSWORD:
 
   formio:
-    build: ../formio/
-    restart: always
+    image: amarkwalder/formbuilder_formio:latest
+    build:
+      context: ..
+      dockerfile: ./env/formio/Dockerfile
     depends_on:
       - mongo
     networks:
@@ -29,12 +30,13 @@ services:
     environment:
       DEBUG: formio:*
       NODE_CONFIG: '{"mongo": "mongodb://host-mongo:27017/formio"}'
-      ROOT_EMAIL: admin@example.com
-      ROOT_PASSWORD: CHANGEME
+      ROOT_EMAIL: admin@ti8m.ch
+      ROOT_PASSWORD: admin
     stdin_open: true
     tty: true
 
   formcockpit:
+    image: amarkwalder/formbuilder_formcockpit:latest
     build: ../formcockpit/
     depends_on:
       - formio
@@ -44,6 +46,7 @@ services:
           - host-formcockpit
 
   formviewer:
+    image: amarkwalder/formbuilder_formviewer:latest
     build: ../formviewer/
     depends_on:
       - formio
@@ -53,6 +56,7 @@ services:
           - host-formviewer
 
   workbench:
+    image: amarkwalder/formbuilder_workbench:latest
     build: ../workbench/
     ports:
       - "4000:4000"
@@ -71,6 +75,7 @@ services:
       FORM_API_URL: http://proxy/formio/form/
 
   proxy: 
+    image: amarkwalder/formbuilder_proxy:latest
     build: ../proxy
     ports:
       - 80:80
