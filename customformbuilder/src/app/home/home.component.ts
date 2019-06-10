@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormioAuthService } from 'angular-formio/auth';
 
 @Component({
   selector: 'app-home',
@@ -7,7 +8,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private auth: FormioAuthService
+  ) { }
 
   ngOnInit() {
   }
